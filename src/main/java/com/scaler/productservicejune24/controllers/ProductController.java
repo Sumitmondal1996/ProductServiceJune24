@@ -2,10 +2,9 @@ package com.scaler.productservicejune24.controllers;
 
 import com.scaler.productservicejune24.models.Product;
 import com.scaler.productservicejune24.services.ProductServices;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +19,39 @@ public class ProductController {
         this.productServices = productServices; // Dependency injection.. Basically FakestoreProductServices is having @Sevice annotations, so that object reference will be passed
     }
     @GetMapping("/{id}")
-    public Product getProductbyId(@PathVariable("id") Long id)
+    public ResponseEntity<Product> getProductbyId(@PathVariable("id") Long id)
     {
-        return productServices.getSingleProduct(id);
+//        throw new RuntimeException("something went wrong");
+       ResponseEntity<Product> res = new ResponseEntity<>(productServices.getSingleProduct(id),
+                HttpStatus.OK);
+        return res;
 
     }
 
+
+    @GetMapping()
     public List<Product> getAllProducts()
     {
-        return new ArrayList<>();
+        return productServices.getAllProducts();
+
+    }
+    @DeleteMapping("/{id}")
+    public void deleteProduct(@PathVariable("id") long id)
+    {
+        return ;
+    }
+
+    @PatchMapping("/{id}")
+    public Product updateProduct(@PathVariable("id") long id,@RequestBody Product product)
+    {
+        return null;
+
+    }
+
+    @PutMapping ("/{id}")
+    public Product replaceProduct(@PathVariable("id") long id,@RequestBody Product product)
+    {
+        return null;
 
     }
 }
