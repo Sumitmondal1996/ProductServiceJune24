@@ -1,18 +1,17 @@
 package com.scaler.productservicejune24.services;
 
+import com.scaler.productservicejune24.exceptions.ProductNotFoundException;
 import com.scaler.productservicejune24.models.Product;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductServices {
-    Product getSingleProduct(Long id);
+    Product getSingleProduct(Long id) throws ProductNotFoundException;
     List<Product> getAllProducts();
     void deleteProduct(Long id);
-    Product updateProduct(Long id, Product product);
-    Product replaceProduct(Long id, Product product);
+    Product updateProduct(Long id, Product product) throws ProductNotFoundException;
+    Product replaceProduct(Long id, Product product) throws ProductNotFoundException;
+    Product addnewproduct(Product product);
 
 }
