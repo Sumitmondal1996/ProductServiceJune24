@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ArithmeticException.class)
-    public ResponseEntity<String> handleNullpointerException()
+    public ResponseEntity<String> handleArithmeticException()
     {
         ExceptionDto exceptionDto = new ExceptionDto();
         exceptionDto.setMessage("Arithmetic exception happened");
@@ -24,16 +24,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<String> handleProductNotFoundException()
+    public ResponseEntity<String> handleProductNotFoundException(ProductNotFoundException p)
     {
         ExceptionDto exceptionDto = new ExceptionDto();
-        exceptionDto.setMessage("Product Not Found");
-        exceptionDto.setSolution("Please try with different id");
-        ResponseEntity res = new ResponseEntity<>(
-                exceptionDto,
-                HttpStatus.NOT_FOUND
-        );
-        return  res;
+        exceptionDto.setMessage("Product with id " + p.getProductid()+ " NotFound Error");
+        exceptionDto.setSolution("Please try with different product");
+
+        ResponseEntity<String> res = new ResponseEntity(exceptionDto, HttpStatus.BAD_REQUEST);
+        return res;
+
 
     }
 }

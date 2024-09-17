@@ -5,12 +5,13 @@ import com.scaler.productservicejune24.models.Category;
 import com.scaler.productservicejune24.models.Product;
 import com.scaler.productservicejune24.repositories.CategoryRepository;
 import com.scaler.productservicejune24.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
-@Service("selfproductservice")
+@Service
 public class Selfproductservice implements  ProductServices{
     ProductRepository productRepository;
     CategoryRepository  categoryRepository;
@@ -23,15 +24,18 @@ public class Selfproductservice implements  ProductServices{
         Optional<Product> product = productRepository.findById(id);
         if(product.isEmpty())
         {
-            throw new ProductNotFoundException("Product with "+ id + " not found");
+            throw new ProductNotFoundException(id);
         }
         return product.get();
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getAllProducts(int pagenumber, int pagesize) {
+        Page<Product> pg =productRepository.findAll(PageRequest.of(pagenumber, pagesize));
+        return pg;
     }
+
+
 
     @Override
     public void deleteProduct(Long id) {
@@ -44,7 +48,7 @@ public class Selfproductservice implements  ProductServices{
         Optional<Product> opt = productRepository.findById(id);
         if(opt.isEmpty())
         {
-            throw new ProductNotFoundException("Product with "+ id + " not exist");
+            throw new ProductNotFoundException(id);
         }
         Product productinDB = opt.get();
         if(product.getTitle()!=null)
@@ -61,7 +65,24 @@ public class Selfproductservice implements  ProductServices{
 
     @Override
     public Product replaceProduct(Long id, Product product) throws ProductNotFoundException {
-        return null;
+        Category category = product.getCategory();
+        if(category.getId()==0)
+        {
+            category = categoryRepository.save(category);
+            product.setCategory(category);
+        }
+
+        Optional<Product> opt = productRepository.findByid(id);
+        if(opt.isEmpty())
+        {
+            throw new ProductNotFoundException(id);
+        }
+        Product productinDB = opt.get();
+        productinDB.setCategory(product.getCategory());
+        productinDB.setTitle(product.getTitle());
+        productinDB.setPrice(product.getPrice());
+        return productRepository.save(productinDB);
+
 
     }
 

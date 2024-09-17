@@ -5,6 +5,8 @@ import com.scaler.productservicejune24.exceptions.ProductNotFoundException;
 import com.scaler.productservicejune24.models.Product;
 import com.scaler.productservicejune24.services.ProductServices;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,7 @@ public class ProductController {
     // localhost:8080/products/10
 
     public ProductServices productServices;
-    public ProductController(@Qualifier("selfproductservice") ProductServices productServices) {
+    public ProductController(ProductServices productServices) {
         this.productServices = productServices; // Dependency injection.. Basically FakestoreProductServices is having @Sevice annotations, so that object reference will be passed
     }
     @GetMapping("/{id}")
@@ -32,9 +34,12 @@ public class ProductController {
 
 
     @GetMapping()
-    public List<Product> getAllProducts()
+    public Page<Product> getAllProducts(@RequestParam("pagenumber") int pagenumber,@RequestParam("pagesize") int pagesize)
     {
-        return productServices.getAllProducts();
+        Page<Product> pg = productServices.getAllProducts(pagenumber, pagesize);
+        //PageImpl<T> ts = new PageImpl<>(pg);
+        return pg;
+
 
     }
     @DeleteMapping("/{id}")
@@ -52,7 +57,7 @@ public class ProductController {
     @PutMapping ("/{id}")
     public Product replaceProduct(@PathVariable("id") long id,@RequestBody Product product) throws ProductNotFoundException {
 
-        return  null;
+        return  productServices.replaceProduct(id, product);
     }
 
     @PostMapping
