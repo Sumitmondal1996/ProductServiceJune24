@@ -1,6 +1,8 @@
 package com.scaler.productservicejune24.controllers;
 
+import com.scaler.productservicejune24.commons.AuthUtil;
 import com.scaler.productservicejune24.dtos.ExceptionDto;
+import com.scaler.productservicejune24.dtos.UserResponsedto;
 import com.scaler.productservicejune24.exceptions.ProductNotFoundException;
 import com.scaler.productservicejune24.models.Product;
 import com.scaler.productservicejune24.services.ProductServices;
@@ -19,26 +21,50 @@ import java.util.List;
 public class ProductController {
     // localhost:8080/products/10
 
-    public ProductServices productServices;
-    public ProductController(ProductServices productServices) {
+    private ProductServices productServices;
+    private AuthUtil authUtil;
+
+    public ProductController(ProductServices productServices, AuthUtil authUtil) {
         this.productServices = productServices; // Dependency injection.. Basically FakestoreProductServices is having @Sevice annotations, so that object reference will be passed
+        this.authUtil = authUtil;
     }
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductbyId(@PathVariable("id") Long id) throws ProductNotFoundException {
 //        throw new RuntimeException("something went wrong");
-       ResponseEntity<Product> res = new ResponseEntity<>(productServices.getSingleProduct(id),
+       ResponseEntity<Product> res = new ResponseEntity<>(
+               productServices.getSingleProduct(id),
                 HttpStatus.OK);
         return res;
 
     }
 
 
-    @GetMapping()
-    public Page<Product> getAllProducts(@RequestParam("pagenumber") int pagenumber,@RequestParam("pagesize") int pagesize)
+    @GetMapping("/tokenValue/{tokenValue}")
+    public ResponseEntity<Page<Product>> getAllProducts(@RequestParam("pagenumber") int pagenumber,@RequestParam("pagesize") int pagesize, @PathVariable String tokenValue)
     {
-        Page<Product> pg = productServices.getAllProducts(pagenumber, pagesize);
-        //PageImpl<T> ts = new PageImpl<>(pg);
-        return pg;
+        ResponseEntity<Page<Product>> responseEntity= null;
+        //make a call to UserService to validate the token
+        try {
+            UserResponsedto userResponsedto = authUtil.validateToken(tokenValue);
+
+            Page<Product> pg = productServices.getAllProducts(pagenumber, pagesize);
+            //PageImpl<T> ts = new PageImpl<>(pg);
+            responseEntity = new ResponseEntity<>(
+                    pg,
+                    HttpStatus.OK
+            );
+
+        }
+
+        catch (Exception e)
+        {
+            responseEntity = new ResponseEntity<>(
+
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+
+        return responseEntity;
 
 
     }

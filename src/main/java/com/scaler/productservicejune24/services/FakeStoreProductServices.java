@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-@Primary// This annotations will ask Spring to create an object for FakeStoreProductServices
+// This annotations will ask Spring to create an object for FakeStoreProductServices
+
+
 
 public class FakeStoreProductServices implements ProductServices{
 

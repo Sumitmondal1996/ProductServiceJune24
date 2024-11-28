@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         );
         return  res;
 
-    }
+    } 
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<String> handleProductNotFoundException(ProductNotFoundException p)

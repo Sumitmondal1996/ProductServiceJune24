@@ -5,13 +5,18 @@ import com.scaler.productservicejune24.models.Category;
 import com.scaler.productservicejune24.models.Product;
 import com.scaler.productservicejune24.repositories.CategoryRepository;
 import com.scaler.productservicejune24.repositories.ProductRepository;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@Primary
 public class Selfproductservice implements  ProductServices{
     ProductRepository productRepository;
     CategoryRepository  categoryRepository;
@@ -31,8 +36,11 @@ public class Selfproductservice implements  ProductServices{
 
     @Override
     public Page<Product> getAllProducts(int pagenumber, int pagesize) {
-        Page<Product> pg =productRepository.findAll(PageRequest.of(pagenumber, pagesize));
-        return pg;
+        //Sort sort = Sort.by("price").ascending().and(Sort.by("name").descending());
+//        System.out.println("pagenumber: " + pagenumber);
+//        System.out.println("pagesize: " + pagesize);
+        Pageable pageable = PageRequest.of(pagenumber - 1, pagesize);
+        return productRepository.findAll(pageable);
     }
 
 
