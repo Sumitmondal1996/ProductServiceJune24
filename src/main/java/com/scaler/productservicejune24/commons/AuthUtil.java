@@ -14,7 +14,7 @@ public class AuthUtil {
 
     public UserResponsedto validateToken(String tokenValue)
     {
-        return restTemplate.getForObject("http://localhost:8083/users/validate/"+ tokenValue,
+        return restTemplate.getForObject("http://USERSERVICE/users/validate/"+ tokenValue,
                 UserResponsedto.class);
     }
 }
